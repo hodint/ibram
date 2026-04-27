@@ -1,0 +1,42 @@
+# 06 IP Reassembly
+
+This directory contains code and resources for IP reassembly tasks. The main script, `03_ip_reassembly.py`, processes pcap files to reassemble fragmented IP packets and exports the results in various formats.
+
+## Main Script
+- `03_ip_reassembly.py`: This script reads pcap files, reassembles fragmented IP packets, and exports the reassembled packets along with non-fragmented packets into CSV and NDJSON formats.
+
+## Usage
+
+To run the IP reassembly script, use the following command:
+
+```sh
+$ python 03_ip_reassembly.py <input_pcap_file> <output_folder> [-g]
+```
+
+The `-g` option indicates that the output files shouldn't be compressed using gzip.
+
+## Requirements
+- Python 3.x
+- pandas
+- scapy
+- gzip (for handling compressed files)
+
+## Output Formats
+The script generates the following output files:
+- CSV files for reassembled packets and non-fragmented packets.
+- NDJSON files for reassembled packets.
+
+## Example
+
+To reassemble IP packets from a pcap file named `traffic.pcap` and export the results to a folder named `output`, you can use the following command:
+
+```sh
+$ python 06_ip_reassembly.py traffic.pcap output -g
+```
+
+To reassemble multiple files in a directory:
+
+```sh
+$ python 03_ip_reassembly.py <input_directory>/*.pcap <output_folder> -g
+```
+

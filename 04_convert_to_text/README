@@ -1,0 +1,38 @@
+# 04_convert_to_text
+
+This folder includes the scripts to convert the PCAP files into text formats for further analysis.
+The main script is `01_pcap_to_csvtshark.py`, which uses `tshark` to convert the PCAP files into CSV format. The output CSV files include a wide range of fields extracted from the packets.
+After obtaining the CSV files, the `02_csvtshark_to_csvmod.py` script can be used to process the CSV files further. This script modifies the CSV files to include only relevant fields and can also generate JSON output for each packet, which can be useful for certain types of analysis.
+
+## Usage
+To convert PCAP files to CSV format using `tshark`, run the following command:
+
+```sh
+$ python 01_pcap_to_csvtshark.py <input_pcap_file> <output_csv_file> [-g]
+```
+The `-g` option indicates that the output CSV file shouldn't be compressed using gzip.
+To further process the CSV files and generate modified CSV and JSON outputs, use the following command:
+
+```sh
+$ python 02_csvtshark_to_csvmod.py <input_csv_file> <output_csv_file_base> [-g] [-j]
+```
+The `-g` option indicates that the output files shouldn't be compressed using gzip, and the `-j` option indicates that a JSON output file should be generated alongside the modified CSV file.
+The `<output_csv_file_base>` parameter is the base name for the output files; the script will append `.csv` for the modified CSV file and `.json` for the JSON file.
+Make sure to have `tshark` installed and accessible in your system's PATH, as it is required for the conversion process.
+
+## Requirements
+- Python 3.x
+- tshark (part of the Wireshark suite)
+- gzip (for handling compressed files)
+
+## Notes
+- The scripts are designed to handle large PCAP files efficiently by processing them in chunks.
+- The generated CSV and JSON files can be used for further analysis using various data analysis tools and libraries.
+
+## Example
+To convert a PCAP file named `traffic.pcap` to CSV format and then process it to generate modified CSV and JSON files, you can use the following commands:
+
+```sh
+$ python 01_pcap_to_csvtshark.py traffic.pcap traffic.csv.gz
+$ python 02_csvtshark_to_csvmod.py traffic.csv.gz traffic_mod -j
+```

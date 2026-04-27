@@ -1,0 +1,27 @@
+# 08 IBR Flow Aggregation and Enrichment
+
+This directory contains scripts and resources for aggregating and enriching traffic data.
+
+These scripts read the output from the IBR reassembly process, with splitted files by protocol (TCP, UDP, ICMP, ...), and aggregate and enrich the flows based on various criteria.
+
+## Scripts
+
+### ICMP
+
+- `icmp_01_agg_no_echo_request.py`: Aggregates ICMP flows excluding echo requests, focusing on other ICMP types. Supports gzip compression for input and output files. This file is used for all ICMP types except echo requests, because they are only a few packets compared with ICMP Echo Requests. The script filter these packets before processing.
+
+These script should be run in order, because they include more filters in the first scripts, and the later scripts process only the remaining packets:
+
+- `icmp_01_agg_echo_request_ipid.py`: Aggregates ICMP Echo Request flows that include IP ID in the payload. The aggregation includes the IP source, ICMP Type, and Code,  and the IP ID. The process creates NDJSON aggregate records for flows with multiple packets and CSV records for single packets. Use the splitted files from the IBR reassembly process as input.
+- `icmp_02_agg_echo_request_noipid.py`: Aggregates ICMP Echo Request flows but not include the IP ID. The aggregation includes the IP source, ICMP Type, and Code. The process creates NDJSON aggregate records for flows with multiple packets and CSV records for single packets. Use the CSV output from the previous script as input.
+- `icmp_03_plot_agg_echo_request_noipid.py`: Generates plots from the aggregated ICMP Echo Request data without IP ID. The script reads the NDJSON aggregate records and creates visualizations to analyze the flow characteristics. This information is used later to decide which fields to include in a enrichment process.
+- `icmp_04_agg_echo_request_noipid_nopayload.py`: Further aggregates ICMP Echo Request flows without IP ID and excludes payload information. The aggregation focuses on key flow attributes, creating NDJSON aggregate records for flows with multiple packets and CSV records for single packets. This process is used to show that is possible aggregate the majority of ICMP Echo Request flows, but probably is better to include other attributes with enrichment and then aggregate the traffic. Use the CSV output from the previous script (`icmp_02_agg_echo_request_noipid.py`) as input.
+- `icmp_05_agg_echo_request_payload_addrs.py`: Example of aggregation using addresses in the payload. This script aggregates ICMP Echo Request flows based on the presence of source and destination IP addresses in the payload. The aggregation includes these addresses along with other flow attributes, creating NDJSON aggregate records for flows with multiple packets and CSV records for single packets. Use the output of `icmp_03_plot_agg_echo_request_noipid.py` as input.
+- `icmp_06_enr_icmp_stats.py`: Enriches ICMP Echo Request flows with statistical data. This script reads the aggregated ICMP Echo Request data and adds statistical information, such as address in the payload, payload length,... , to enhance the analysis of the flows. The file `icmp_06_enr_icmp_stats.ipynb` contains an exploratory analysis of the enriched data, and is the same script in notebook format. Use the output of `icmp_03_plot_agg_echo_request_noipid.py` as input.
+- `icmp_07_agg_enriched_stats.py`: Aggregates the enriched ICMP Echo Request flows. This script takes the enriched data from the previous step and performs aggregation based on the new attributes, creating NDJSON aggregate records for flows with multiple packets and CSV records for single packets. Use the output of `icmp_06_enr_icmp_stats.py` as input.
+
+### TCP
+
+### UDP
+
+### Other Protocols

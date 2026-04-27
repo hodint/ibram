@@ -1,0 +1,61 @@
+# 01_pcap_tools
+
+This directory contains the scripts for preparing the acquired PCAP files for analysis.
+
+## Usage
+
+The first step is create a directory to store the adquired PCAP files. We will use the directory `00_pcap_orig`. If the files provided come from different IBR sources, repeat this process for each source.
+
+### Step 1: Split the file in chunks
+
+Because the files could be very big and then can exhaust the memory, it's recommended to split them into smaller files before processing. This can be done using tools provided in this folder. Then, we will run the script `pcap_split_chunks.py`. This script receives a source and destination folder, and split the source files in chunks of a specified size. By default, the output files are compressed with gzip, and the chunk size is 500,000 records per file. Is possible to change the chunk size, using an extra argument with the size, and disable the compression with the `-g` option. This script can split `.pcap` files and compressed `.pcap.gz` or `.pcap.xz` files.
+
+```sh
+$ python pcap_split_chunks.py [-g] <source> <destination> [size]
+$ python pcap_split_chunks.py 00_pcap_orig 01_pcap_split
+```
+
+With this command we will have multiple files in the `01_pcap_split` folder.
+
+### Step 2: Filter the packets
+
+This process is optional. The files may include IP addresses that have been used as test addresses or addresses that are not IBR traffic. Before starting the traffic process, it is best to remove this traffic. To do this, create a file with the IP addresses to be removed, one per line. Then run the filtering script `pcap_filter.py`. The script receives the source directory, the destination directory, and the file with the addresses as parameters. It can also receive ports with the `-p` parameter and can also choose not to compress the output files with `gzip` using the `-g` parameter (by default they are compressed, as in the previous script):
+
+```sh
+$ python pcap_filter.py [-g] [-p 1234] <source> <destination> <ips_file>
+$ python pcap_filter.py 01_pcap_split 02_pcap_split-filtered test-ips.txt
+```
+
+### Step 3: Cut the files by day
+
+It has been decided to split the files by day, so that subsequent analyses have a fixed duration of 24 hours. Is process is done with `pcap_split_days.py` and the `pcap_merger.py` scripts.
+
+ `pcap_split_days.py` split the files with multiple days in multiple files. This script only accepts two parameters: source directory and destination directory. Like the previous scripts, it supports the `-g` parameter to prevent the output files from being compressed with `gzip`. It is important to note that this script does not generate files by day, it only divides the previously fragmented files into chunks, and filtered if necessary, into several files if they include several days. Since it is common for multiple chunks to be generated in a single day, this script will only separate the file that has the day change, leaving the rest of the files unchanged (the source and destination files will be similar).
+
+```sh
+$ python pcap_split_days.py [-g] <source> <destination>
+$ python pcap_split_days.py 02_pcap_split-filtered 03_pcap_split-filtered-days
+```
+
+NOTE: This script can possibly be made faster by using the information from the first and last packets, for example using `capinfos`, and if they are on the same day, copying the file.
+
+### Step 4: Merge daily
+
+Now that we have it divided by day and filtered, we can merge it by day. This process merges the files by day, leaving a single file for each day. The `pcap_merger.py` script takes as arguments the source directory, the destination directory, and the mask used in the file name, which will be supplemented with the date in `_YYYYMMDD` format. Files will be compressed by default in the output, but the `-g` argument can be used to disable compression.
+
+```sh
+$ python [-g] pcap_merger.py <source> <destination> <mask>
+$ python pcap_merger.py  03_pcap_split-filtered-days 04_pcap_day_merged darknet
+```
+
+These are the files that can be obtained from the repository and on which tools such as `capinfos` can be used to perform analyses on the `pcap` files.
+
+### Step 5: Split by chunks
+
+Finally, it is recommended to divide the files into chunks again, which will now include records from a single day in each file. The process can be carried out in the same way as in step 1.
+
+```sh
+$ python pcap_split_chunks.py [-g] <source> <destination> [size]
+$ python pcap_split_chunks.py 04_pcap_day_merged 05_pcap_day_merged_cutted
+python pcap_split_chunks.py -g /home/kix/analisis_umu/04_pcap_day_merged /home/kix/analisis_umu/05_pcap_day_merged_cut
+```

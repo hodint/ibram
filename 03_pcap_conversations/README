@@ -1,0 +1,40 @@
+# PCAP conversations
+
+This folder includes scripts to compare IBR traffic against normal traffic.
+
+These scripts use the Monday-WorkingHours.pcap from:
+http://cicresearch.ca/CICDataset/CIC-IDS-2017/Dataset/CIC-IDS-2017/PCAPs/
+
+## Prerequisites
+
+- Wireshark/tshark installed (for conversation stats)
+- Python 3.x (if the plotting scripts are Python)
+- The PCAP file: Monday-WorkingHours.pcap
+
+## Generate conversation stats
+
+From this directory:
+
+Windows (cmd or PowerShell):
+```
+tshark -r Monday-WorkingHours.pcap -q -z conv,tcp > Monday-WorkingHours-stats-tcp.txt
+tshark -r Monday-WorkingHours.pcap -q -z conv,udp > Monday-WorkingHours-stats-udp.txt
+```
+
+This creates:
+- Monday-WorkingHours-stats-tcp.txt
+- Monday-WorkingHours-stats-udp.txt
+
+## Scripts
+
+We use the following scripts to create and visualize conversations:
+
+- plot-conversation-histogram-tshark.ipynb  (plots histogram(s) from the stats files)
+- plot-conversation-histogram-wireshark.ipynb (alternative plotting using Wireshark export)
+- conversor_tshark-wireshark.py (converts tshark output to wireshark format)
+
+## Notes
+
+- Make sure tshark is on your PATH (check with: tshark -v).
+- Replace script names/args above if your filenames differ.
+- Check the plot-conversation-histogram notebooks for more details on usage.
