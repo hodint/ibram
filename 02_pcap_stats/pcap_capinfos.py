@@ -247,6 +247,7 @@ def main():
 
     with open(args.w, "w", encoding="utf-8") as out:
         for fpath in files:
+            print(f"Processing: {fpath}")
             lines = run_capinfos(fpath)
             if not lines:
                 print(f"warning: capinfos failure or without output: {fpath}", file=sys.stderr)
