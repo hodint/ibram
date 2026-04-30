@@ -210,25 +210,8 @@ __marimo__/
 # Mac Folders
 .DS_Store
 
-# txt config files in the 01_pcap_tools
-01_pcap_tools/*.txt
-# ND JSON files and stats generated
-02_pcap_stats/*.ndjson
-02_pcap_stats/*.json
-02_pcap_stats/output_stats
-# 03_pcap_conversations generated plots
-03_pcap_conversations/*.pdf
-03_pcap_conversations/darknet_20251010_*_conversations.*
-Monday-WorkingHours-stats-*.txt
-# JSON, pdf and TeX files of 05
-05_csv_stats/*.json
-05_csv_stats/*.tex
-05_csv_stats/*.pdf
-# Test folders in the 06 reassembly
-06_ip_reassembly/test-*
-# 08 test folders
-08_ibrflow/test-*
-08_ibrflow/*.pdf
-# Ignore pdf images in 09_ibrflow_analysis
-09_ibrflow_analysis/*.pdf
+# Ignore filter files in the folder 01_pcap_tools
+01_pcap_tools/filter_files/
 
+# Ignore files in the output directories
+output/
