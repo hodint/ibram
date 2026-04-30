@@ -6,12 +6,12 @@ This folder contains scripts to calculate statistics on PCAP files. These script
 
 #### `pcap_capinfos.py`
 
-This script receives a folder with `pcap` files (`pcap.gz` and `pcap.xz` are supported) and creates a NDJSON file with the information of these files (argument `-w`).
+This script receives a folder with `pcap` files (`pcap.gz` and `pcap.xz` are supported) and creates a NDJSON file with the information of these files (argument `-w`). Please, create the output folder before running the script.
 
 Example:
 
 ```sh
-$ python pcap_capinfos.py -w darknet_capinfos.ndjson 04_pcap_day
+$ python pcap_capinfos.py -w output/darknet_capinfos.ndjson 04_pcap_day
 ```
 
 Output:
